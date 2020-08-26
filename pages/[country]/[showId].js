@@ -1,9 +1,14 @@
 import axios from 'axios';
 import parse from 'html-react-parser';
 import Cast from '../../components/Cast';
+import Error from 'next/error';
 
-const ShowDetails = ({ show }) => {
+const ShowDetails = ({ show = {}, statusCode }) => {
   const { name, image, summary, _embedded } = show;
+
+  if (statusCode) {
+    return <Error statusCode={statusCode} />;
+  }
 
   return (
     <div className='show-details'>
@@ -13,11 +18,11 @@ const ShowDetails = ({ show }) => {
       ></div>
       <h1>{name}</h1>
       <div>{parse(summary)}</div>
-      <Cast cast={_embedded.cast} />
+      {_embedded.cast.length > 0 ? <Cast cast={_embedded.cast} /> : ''}
 
       <style jsx>{`
         .show-details_poster {
-          height: 200px;
+          height: 250px;
           background-size: cover;
         }
       `}</style>
@@ -25,11 +30,20 @@ const ShowDetails = ({ show }) => {
   );
 };
 
-ShowDetails.getInitialProps = async () => {
-  const response = await axios.get('http://api.tvmaze.com/shows/1?embed=cast');
-  return {
-    show: response.data,
-  };
+ShowDetails.getInitialProps = async ({ query }) => {
+  try {
+    const { showId } = query;
+    const response = await axios.get(
+      `http://api.tvmaze.com/shows/${showId}?embed=cast`
+    );
+    return {
+      show: response.data,
+    };
+  } catch (error) {
+    return {
+      statusCode: error.response ? error.response.status : 500,
+    };
+  }
 };
 
 export default ShowDetails;

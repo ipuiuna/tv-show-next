@@ -19,10 +19,10 @@ const Thumbnail = ({
       <style jsx>{`
         .thumbnail_img {
           width: ${small ? '100px' : 'auto'};
+          margin: 5px;
         }
         .thumbnail_caption {
-          text-align: center;
-          padding: 10px;
+          width: 180px;
         }
       `}</style>
     </div>

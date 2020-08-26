@@ -24,9 +24,6 @@ const Cast = ({ cast }) => {
         .cast_list {
           display: flex;
           overflow-x: scroll;
-          padding: 0;
-          margin: 0;
-          list-style-type: none;
         }
 
         .cast_list > :global(li) {
